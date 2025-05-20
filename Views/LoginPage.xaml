@@ -1,0 +1,16 @@
+<ContentPage
+    x:Class="ICTS_CT.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Login">
+
+    <StackLayout Padding="30" Spacing="15" VerticalOptions="Center">
+        <Label Text="Admin Login" FontSize="24" HorizontalOptions="Center" />
+        
+        <Entry x:Name="usernameEntry" Placeholder="Username" />
+        <Entry x:Name="passwordEntry" Placeholder="Password" IsPassword="True" />
+        
+        <Button Text="Login" Clicked="OnLoginClicked" />
+        <Label x:Name="errorLabel" TextColor="Red" IsVisible="False" />
+    </StackLayout>
+</ContentPage>

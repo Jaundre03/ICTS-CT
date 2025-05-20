@@ -1,0 +1,52 @@
+﻿<ContentPage
+    x:Class="ICTS_CT.Views.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodels="clr-namespace:ICTS_CT.ViewModels"
+    Title="ICTS Contribution Tracker">
+
+    <ContentPage.BindingContext>
+        <viewmodels:MainPageViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid Padding="20" RowDefinitions="Auto, *" RowSpacing="15">
+
+        <!-- Controls (Import, Picker, Add Button) -->
+        <StackLayout Spacing="15" Grid.Row="0">
+            <Button Text="Import Members" Clicked="OnImportMembersClicked" />
+
+            <Label Text="Contribution Type:" FontAttributes="Bold" />
+            <Picker 
+                ItemsSource="{Binding ContributionTypes}" 
+                SelectedItem="{Binding SelectedContribution}" />
+
+            <Button Text="Add New Contribution" Clicked="OnAddContributionClicked" />
+
+            <Label Text="Member List:" FontAttributes="Bold" />
+        </StackLayout>
+
+        <!-- Scrollable member list -->
+        <CollectionView Grid.Row="1" ItemsSource="{Binding DisplayMembers}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" Margin="5" BorderColor="LightGray" CornerRadius="10">
+                        <!-- Tap on entire Frame triggers command -->
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ShowMemberContributionsCommand}"
+                                CommandParameter="{Binding}" />
+                        </Frame.GestureRecognizers>
+
+                        <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                            <Label Text="{Binding DisplayName}" VerticalOptions="Center" />
+                            <CheckBox Grid.Column="1"
+                                      IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                      VerticalOptions="Center" />
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+</ContentPage>
