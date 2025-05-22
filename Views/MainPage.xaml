@@ -15,11 +15,8 @@
         <StackLayout Spacing="15" Grid.Row="0">
             <Button Text="Import Members" Clicked="OnImportMembersClicked" />
             <Button Text="Add New Contribution" Clicked="OnAddContributionClicked" />
-            <Button Text="Summary"
-                Clicked="OnSummaryButtonClicked"
-                HorizontalOptions="Center"
-                VerticalOptions="Center" />
-
+            <Button Text="Summary" Clicked="OnSummaryButtonClicked"/>
+            <Button Text="Export Unpaid Contributions" Clicked="OnExportUnpaidClicked"/>
 
             <Label Text="Contribution Type:" FontAttributes="Bold" />
             <Picker
@@ -30,6 +27,7 @@
 
 
             <Label Text="Member List:" FontAttributes="Bold" />
+            
         </StackLayout>
 
         <!-- Scrollable member list -->

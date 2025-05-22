@@ -17,7 +17,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ICTS-CT")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+4f9f9e05fa130f256b28c98891920be80f6b9596")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+259d4683af4ae035311ffe15a28582c4f09acdd3")]
 [assembly: System.Reflection.AssemblyProductAttribute("ICTS-CT")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ICTS-CT")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -24,7 +24,7 @@ namespace ICTS_CT.Views
             string password = passwordEntry.Text;
 
             // Simple hardcoded login logic (replace with real auth later)
-            if (username == "admin" && password == "admin123")
+            if (username == "admin" && password == "123")
             {
                 // Navigate to AppShell (safe null-forgiving operator used)
                 Application.Current!.MainPage = new AppShell();

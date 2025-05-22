@@ -45,5 +45,26 @@ namespace ICTS_CT.Services
 
             return members;
         }
+        // ExcelService.cs
+        public void ExportUnpaidListToExcel(IEnumerable<(string ID, string Reason)> unpaidMembers, string exportPath)
+        {
+            using var package = new ExcelPackage();
+            var worksheet = package.Workbook.Worksheets.Add("Unpaid List");
+
+            worksheet.Cells[1, 1].Value = "ID";
+            worksheet.Cells[1, 2].Value = "Remarks";
+
+            int row = 2;
+            foreach (var (ID, Reason) in unpaidMembers)
+            {
+                worksheet.Cells[row, 1].Value = ID;
+                worksheet.Cells[row, 2].Value = Reason;
+                row++;
+            }
+
+            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+            package.SaveAs(new FileInfo(exportPath));
+        }
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -12,10 +13,11 @@ namespace ICTS_CT.ViewModels
     public class MainPageViewModel : INotifyPropertyChanged
     {
         private Contribution _selectedContribution = new Contribution("None", 0);
+        private string _searchQuery = string.Empty;
 
         public ObservableCollection<Contribution> ContributionTypes { get; set; } = new();
-        public ObservableCollection<Member> Members { get; set; } = new(); // for internal data
-        public ObservableCollection<MemberContributionViewModel> DisplayMembers { get; set; } = new(); // for UI
+        public ObservableCollection<Member> Members { get; set; } = new(); // Internal data
+        public ObservableCollection<MemberContributionViewModel> DisplayMembers { get; set; } = new(); // For UI
 
         public Contribution SelectedContribution
         {
@@ -25,6 +27,20 @@ namespace ICTS_CT.ViewModels
                 if (_selectedContribution != value)
                 {
                     _selectedContribution = value;
+                    OnPropertyChanged();
+                    RefreshDisplayMembers();
+                }
+            }
+        }
+
+        public string SearchQuery
+        {
+            get => _searchQuery;
+            set
+            {
+                if (_searchQuery != value)
+                {
+                    _searchQuery = value;
                     OnPropertyChanged();
                     RefreshDisplayMembers();
                 }
@@ -42,7 +58,7 @@ namespace ICTS_CT.ViewModels
         private void LoadInitialData()
         {
             ContributionTypes.Add(new Contribution("None", 0));
-            ContributionTypes.Add(new Contribution("Membership Fee", 100)); // Default sample amount
+            ContributionTypes.Add(new Contribution("Membership Fee", 70)); // Default 
 
             SelectedContribution = ContributionTypes.First();
 
@@ -51,7 +67,10 @@ namespace ICTS_CT.ViewModels
 
         public void AddContribution(string name, decimal amount)
         {
-            if (!ContributionTypes.Any(c => c.Name == name))
+            if (string.IsNullOrWhiteSpace(name) || amount <= 0)
+                return;
+
+            if (!ContributionTypes.Any(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
             {
                 ContributionTypes.Add(new Contribution(name, amount));
             }
@@ -59,12 +78,44 @@ namespace ICTS_CT.ViewModels
             SelectedContribution = ContributionTypes.First(c => c.Name == name);
         }
 
-        public void RefreshDisplayMembers()
+        public void UpdateContribution(string oldName, string newName, decimal newAmount)
         {
-            DisplayMembers.Clear();
-            foreach (var member in Members)
+            var contribution = ContributionTypes.FirstOrDefault(c => c.Name == oldName);
+            if (contribution != null)
             {
-                DisplayMembers.Add(new MemberContributionViewModel(member, () => SelectedContribution));
+                contribution.Name = newName;
+                contribution.Amount = newAmount;
+
+                // Update member contributions keys
+                foreach (var member in Members)
+                {
+                    if (member.Contributions.TryGetValue(oldName, out var value))
+                    {
+                        member.Contributions.Remove(oldName);
+                        member.Contributions[newName] = value;
+                    }
+                }
+
+                RefreshDisplayMembers();
+            }
+        }
+
+        public void DeleteContribution(string name)
+        {
+            if (name == "None") return;
+
+            var contribution = ContributionTypes.FirstOrDefault(c => c.Name == name);
+            if (contribution != null)
+            {
+                ContributionTypes.Remove(contribution);
+
+                foreach (var member in Members)
+                {
+                    member.Contributions.Remove(name);
+                }
+
+                SelectedContribution = ContributionTypes.First();
+                RefreshDisplayMembers();
             }
         }
 
@@ -76,6 +127,25 @@ namespace ICTS_CT.ViewModels
 
             RefreshDisplayMembers();
         }
+
+        public void RefreshDisplayMembers()
+        {
+            DisplayMembers.Clear();
+
+            if (SelectedContribution.Name == "None")
+                return;
+
+            var filtered = Members.Where(m =>
+                string.IsNullOrWhiteSpace(SearchQuery) ||
+                m.DisplayName.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase));
+
+            foreach (var member in filtered)
+            {
+                DisplayMembers.Add(new MemberContributionViewModel(member, () => SelectedContribution));
+            }
+        }
+
+
 
         private async void ShowMemberContributions(Member member)
         {
@@ -90,6 +160,28 @@ namespace ICTS_CT.ViewModels
                 : "No contributions paid.";
 
             await Shell.Current.DisplayAlert(member.DisplayName, message, "OK");
+        }
+
+        // Summary info for current contribution
+        public (int totalPaid, decimal totalAmount, List<Member> paidMembers) GetSummary()
+        {
+            var paidMembers = Members
+                .Where(m => m.GetIsChecked(SelectedContribution.Name))
+                .ToList();
+
+            var totalAmount = paidMembers.Count * SelectedContribution.Amount;
+
+            return (paidMembers.Count, totalAmount, paidMembers);
+        }
+
+        // Unpaid list for export
+        public IEnumerable<(string ID, string Reason)> GetUnpaidMembersForCurrentContribution()
+        {
+            var name = SelectedContribution.Name;
+
+            return Members
+                .Where(m => !m.GetIsChecked(name))
+                .Select(m => (m.ID, $"Did not pay {name}"));
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

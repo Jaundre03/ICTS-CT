@@ -310,3 +310,4 @@ D:\VS Code\App Dev\ICTS-CT\bin\Debug\net8.0-maccatalyst\maccatalyst-x64\Microsof
 D:\VS Code\App Dev\ICTS-CT\bin\Debug\net8.0-maccatalyst\maccatalyst-x64\Microsoft.IO.RecyclableMemoryStream.dll
 D:\VS Code\App Dev\ICTS-CT\bin\Debug\net8.0-maccatalyst\maccatalyst-x64\System.Security.Cryptography.Pkcs.dll
 D:\VS Code\App Dev\ICTS-CT\bin\Debug\net8.0-maccatalyst\maccatalyst-x64\System.Security.Cryptography.Xml.dll
+D:\VS Code\App Dev\ICTS-CT\obj\Debug\net8.0-maccatalyst\maccatalyst-x64\ICTS-CT.sourcelink.json
