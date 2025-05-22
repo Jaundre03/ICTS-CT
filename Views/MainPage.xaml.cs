@@ -1,5 +1,6 @@
 using ICTS_CT.ViewModels;
 using ICTS_CT.Services;
+using ICTS_CT.Models;
 
 
 namespace ICTS_CT.Views;
@@ -77,5 +78,21 @@ public partial class MainPage : ContentPage
             await DisplayAlert("Error", $"Failed to import: {ex.Message}", "OK");
         }
     }
+    private async void OnSummaryButtonClicked(object sender, EventArgs e)
+    {
+        if (_viewModel == null || _viewModel.SelectedContribution.Name == "None")
+        {
+            await DisplayAlert("Invalid", "Please select a valid contribution type.", "OK");
+            return;
+        }
+
+        var contribution = new Contribution
+        {
+            Name = _viewModel.SelectedContribution.Name
+        };
+
+        await Navigation.PushAsync(new SummaryPage(contribution, _viewModel.Members));
+    }
+
 
 }

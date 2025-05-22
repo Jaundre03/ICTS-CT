@@ -14,13 +14,20 @@
         <!-- Controls (Import, Picker, Add Button) -->
         <StackLayout Spacing="15" Grid.Row="0">
             <Button Text="Import Members" Clicked="OnImportMembersClicked" />
+            <Button Text="Add New Contribution" Clicked="OnAddContributionClicked" />
+            <Button Text="Summary"
+                Clicked="OnSummaryButtonClicked"
+                HorizontalOptions="Center"
+                VerticalOptions="Center" />
+
 
             <Label Text="Contribution Type:" FontAttributes="Bold" />
-            <Picker 
-                ItemsSource="{Binding ContributionTypes}" 
+            <Picker
+                Title="Select Contribution"
+                ItemsSource="{Binding ContributionTypes}"
+                ItemDisplayBinding="{Binding Name}"
                 SelectedItem="{Binding SelectedContribution}" />
 
-            <Button Text="Add New Contribution" Clicked="OnAddContributionClicked" />
 
             <Label Text="Member List:" FontAttributes="Bold" />
         </StackLayout>

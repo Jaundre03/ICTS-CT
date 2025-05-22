@@ -11,14 +11,13 @@ namespace ICTS_CT.ViewModels
 {
     public class MainPageViewModel : INotifyPropertyChanged
     {
-        private string _selectedContribution = string.Empty;
+        private Contribution _selectedContribution = new Contribution("None", 0);
 
-
-        public ObservableCollection<string> ContributionTypes { get; set; } = new();
+        public ObservableCollection<Contribution> ContributionTypes { get; set; } = new();
         public ObservableCollection<Member> Members { get; set; } = new(); // for internal data
         public ObservableCollection<MemberContributionViewModel> DisplayMembers { get; set; } = new(); // for UI
 
-        public string SelectedContribution
+        public Contribution SelectedContribution
         {
             get => _selectedContribution;
             set
@@ -42,8 +41,9 @@ namespace ICTS_CT.ViewModels
 
         private void LoadInitialData()
         {
-            ContributionTypes.Add("None");
-            ContributionTypes.Add("Membership Fee");
+            ContributionTypes.Add(new Contribution("None", 0));
+            ContributionTypes.Add(new Contribution("Membership Fee", 100)); // Default sample amount
+
             SelectedContribution = ContributionTypes.First();
 
             RefreshDisplayMembers();
@@ -51,12 +51,12 @@ namespace ICTS_CT.ViewModels
 
         public void AddContribution(string name, decimal amount)
         {
-            if (!ContributionTypes.Contains(name))
+            if (!ContributionTypes.Any(c => c.Name == name))
             {
-                ContributionTypes.Add(name);
+                ContributionTypes.Add(new Contribution(name, amount));
             }
 
-            SelectedContribution = name;
+            SelectedContribution = ContributionTypes.First(c => c.Name == name);
         }
 
         public void RefreshDisplayMembers()
@@ -92,7 +92,6 @@ namespace ICTS_CT.ViewModels
             await Shell.Current.DisplayAlert(member.DisplayName, message, "OK");
         }
 
-
         public event PropertyChangedEventHandler? PropertyChanged;
         void OnPropertyChanged([CallerMemberName] string name = null!) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
@@ -101,12 +100,12 @@ namespace ICTS_CT.ViewModels
     public class MemberContributionViewModel : INotifyPropertyChanged
     {
         private readonly Member _member;
-        private readonly Func<string> _getSelectedContribution;
+        private readonly Func<Contribution> _getSelectedContribution;
 
         public string DisplayName => _member.DisplayName;
-        public Member Member => _member; // Needed for CommandParameter binding in XAML
+        public Member Member => _member;
 
-        public MemberContributionViewModel(Member member, Func<string> getSelectedContribution)
+        public MemberContributionViewModel(Member member, Func<Contribution> getSelectedContribution)
         {
             _member = member;
             _getSelectedContribution = getSelectedContribution;
@@ -114,10 +113,10 @@ namespace ICTS_CT.ViewModels
 
         public bool IsChecked
         {
-            get => _member.GetIsChecked(_getSelectedContribution());
+            get => _member.GetIsChecked(_getSelectedContribution().Name);
             set
             {
-                _member.SetIsChecked(_getSelectedContribution(), value);
+                _member.SetIsChecked(_getSelectedContribution().Name, value);
                 OnPropertyChanged(nameof(IsChecked));
             }
         }

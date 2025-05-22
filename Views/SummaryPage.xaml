@@ -1,4 +1,30 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ICTS_CT.Views.SummaryPage">
+             x:Class="ICTS_CT.Views.SummaryPage"
+             Title="Summary">
+    
+    <VerticalStackLayout Padding="20" Spacing="20">
+        
+        <Label Text="Contribution Summary"
+               FontSize="24"
+               FontAttributes="Bold"
+               HorizontalOptions="Center" />
+
+        <Label Text="{Binding ContributionName}"
+               FontSize="18"
+               TextColor="DarkBlue"
+               HorizontalOptions="Center" />
+
+        <Frame BorderColor="Gray" Padding="15">
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Total Contributions Collected:" />
+                <Label Text="{Binding TotalCollected}" FontAttributes="Bold" TextColor="Green" />
+
+                <Label Text="Total Contributions Not Collected:" />
+                <Label Text="{Binding TotalNotCollected}" FontAttributes="Bold" TextColor="Red" />
+            </VerticalStackLayout>
+        </Frame>
+
+        <Button Text="Back to Dashboard" Clicked="OnBackClicked"/>
+    </VerticalStackLayout>
 </ContentPage>
